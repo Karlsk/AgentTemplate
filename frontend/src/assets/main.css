@@ -1,0 +1,74 @@
+@import './base.css';
+@import 'tailwindcss';
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #3B82F6;
+  --color-primary-hover: #2563EB;
+  --color-primary-light: #EFF6FF;
+  --color-page-bg: #F5F7FA;
+  --color-page-bg-dark: #0f0f23;
+  --color-card-bg: #FFFFFF;
+  --color-card-bg-dark: #1a1a2e;
+  --color-border: #EEEEEE;
+  --color-border-dark: rgba(255, 255, 255, 0.08);
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #6B7280;
+  --color-text-primary-dark: #F3F4F6;
+  --color-text-secondary-dark: #9CA3AF;
+  --color-sidebar-bg: #FFFFFF;
+  --color-sidebar-bg-dark: #16163a;
+}
+
+body {
+  background-color: var(--color-page-bg);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background-color: var(--color-page-bg-dark);
+  color: var(--color-text-primary-dark);
+}
+
+/* Bento Card */
+.bento-card {
+  background: var(--color-card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark .bento-card {
+  background: var(--color-card-bg-dark);
+  border-color: var(--color-border-dark);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Bento Grid */
+.bento-grid {
+  display: grid;
+  gap: 16px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  # Vue Frontend with Nginx
+  frontend:
+    container_name: agent-frontend
+    build:
+      context: .
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-"http://agent-backend:8000"}
+    ports:
+      - "18080:80"
+    restart: always
+    networks:
+      - backend_agent
+
+networks:
+  backend_agent:
+    driver: bridge
+    external: true
