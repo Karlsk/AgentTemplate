@@ -1,33 +1,36 @@
-# FastAPI LangGraph Agent Template
+# TerraChatBi
 
-A production-ready FastAPI template for building AI agent applications with LangGraph integration. This template provides a robust foundation for building scalable, secure, and maintainable AI agent services.
+A production-ready full-stack AI agent application with FastAPI backend and Vue 3 frontend, featuring LangGraph integration for intelligent chatbot workflows.
 
 ## 🌟 Features
 
 - **Production-Ready Architecture**
 
-  - FastAPI for high-performance async API endpoints with uvloop optimization
+  - FastAPI backend with uvloop optimization for high-performance async API endpoints
+  - Vue 3 + Vite frontend with Naive UI component library and TailwindCSS
   - LangGraph integration for AI agent workflows with state persistence
   - Langfuse for LLM observability and monitoring
-  - Structured logging with environment-specific formatting and request context
+  - Structured logging with structlog and environment-specific formatting
   - Rate limiting with configurable rules per endpoint
   - PostgreSQL with pgvector for data persistence and vector storage
-  - Docker and Docker Compose support
+  - Docker and Docker Compose support for easy deployment
   - Prometheus metrics and Grafana dashboards for monitoring
 
 - **AI & LLM Features**
 
   - Long-term memory with mem0ai and pgvector for semantic memory storage
-  - LLM Service with automatic retry logic using tenacity
-  - Multiple LLM model support (GPT-4o, GPT-4o-mini, GPT-5, GPT-5-mini, GPT-5-nano)
+  - Multi-provider LLM support (OpenAI, Azure OpenAI, VLLM, custom endpoints)
+  - LLM Service with automatic retry logic and backup model fallback
+  - Dynamic AI model management with database configuration
   - Streaming responses for real-time chat interactions
   - Tool calling and function execution capabilities
 
 - **Security**
 
-  - JWT-based authentication
-  - Session management
-  - Input sanitization
+  - JWT-based authentication with session management
+  - Workspace-based multi-tenancy support
+  - Role-based access control (RBAC)
+  - Input sanitization and validation
   - CORS configuration
   - Rate limiting protection
 
@@ -38,7 +41,7 @@ A production-ready FastAPI template for building AI agent applications with Lang
   - Clear project structure following best practices
   - Type hints throughout for better IDE support
   - Easy local development setup with Makefile commands
-  - Automatic retry logic with exponential backoff for resilience
+  - Automatic database migrations with Alembic
 
 - **Model Evaluation Framework**
   - Automated metric-based evaluation of model outputs
@@ -52,7 +55,8 @@ A production-ready FastAPI template for building AI agent applications with Lang
 ### Prerequisites
 
 - Python 3.13+
-- PostgreSQL ([see Database setup](#database-setup))
+- Node.js 20.19.0+ or 22.12.0+
+- PostgreSQL with pgvector extension
 - Docker and Docker Compose (optional)
 
 ### Environment Setup
@@ -61,80 +65,91 @@ A production-ready FastAPI template for building AI agent applications with Lang
 
 ```bash
 git clone <repository-url>
-cd <project-directory>
+cd TerraAgent
 ```
 
-2. Create and activate a virtual environment:
+2. Setup backend:
 
 ```bash
+cd backend
 uv sync
+cp .env.example .env.development
 ```
 
-3. Copy the example environment file:
+3. Setup frontend:
 
 ```bash
-cp .env.example .env.[development|staging|production] # e.g. .env.development
+cd ../frontend
+npm install
+cp .env.example .env
 ```
 
-4. Update the `.env` file with your configuration (see `.env.example` for reference)
+4. Update the `.env` files with your configuration
 
 ### Database setup
 
-1. Create a PostgreSQL database (e.g Supabase or local PostgreSQL)
+1. Create a PostgreSQL database with pgvector extension
 2. Update the database connection settings in your `.env` file:
 
 ```bash
-POSTGRES_HOST=db
+POSTGRES_SERVER=localhost
 POSTGRES_PORT=5432
-POSTGRES_DB=cool_db
+POSTGRES_DB=terra-agent
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 ```
 
-- You don't have to create the tables manually, the ORM will handle that for you.But if you faced any issues,please run the `schemas.sql` file to create the tables manually.
+Database tables are automatically created via Alembic migrations on application startup.
 
 ### Running the Application
 
 #### Local Development
 
-1. Install dependencies:
+**Backend:**
 
 ```bash
-uv sync
+# From project root
+make backend-dev
+# Or from backend directory
+cd backend && uv run uvicorn app.main:app --reload --port 8000 --loop uvloop
 ```
 
-2. Run the application:
+**Frontend:**
 
 ```bash
-make [dev|staging|prod] # e.g. make dev
+# From project root
+make frontend-dev
+# Or from frontend directory
+cd frontend && npm run dev
 ```
 
-1. Go to Swagger UI:
-
-```bash
-http://localhost:8000/docs
-```
+Access the application:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8000
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
 #### Using Docker
 
-1. Build and run with Docker Compose:
-
 ```bash
-make docker-build-env ENV=[development|staging|production] # e.g. make docker-build-env ENV=development
-make docker-run-env ENV=[development|staging|production] # e.g. make docker-run-env ENV=development
+# Build and run backend with Docker
+make backend-docker-build-env ENV=development
+make backend-docker-run-env ENV=development
+
+# Build and run frontend with Docker
+make frontend-docker-build
+make frontend-docker-up
 ```
 
-2. Access the monitoring stack:
+#### Monitoring Stack
 
 ```bash
-# Prometheus metrics
-http://localhost:9090
+# Start monitoring services (Prometheus + Grafana)
+make backend-monitoring-up
 
-# Grafana dashboards
-http://localhost:3000
-Default credentials:
-- Username: admin
-- Password: admin
+# Access monitoring
+# Prometheus: http://localhost:9090
+# Grafana: http://localhost:3000 (admin/admin)
 ```
 
 The Docker setup includes:
@@ -143,11 +158,7 @@ The Docker setup includes:
 - PostgreSQL database
 - Prometheus for metrics collection
 - Grafana for metrics visualization
-- Pre-configured dashboards for:
-  - API performance metrics
-  - Rate limiting statistics
-  - Database performance
-  - System resource usage
+- Pre-configured dashboards for API performance and system monitoring
 
 ## 📊 Model Evaluation
 
@@ -210,43 +221,36 @@ The application uses a flexible configuration system with environment-specific s
 
 ### Environment Variables
 
-Key configuration variables include:
-
 ```bash
 # Application
+PROJECT_NAME="TerraChatBi"
 APP_ENV=development
-PROJECT_NAME="FastAPI LangGraph Agent"
-DEBUG=true
 
 # Database
-POSTGRES_HOST=localhost
+POSTGRES_SERVER=localhost
 POSTGRES_PORT=5432
-POSTGRES_DB=mydb
+POSTGRES_DB=terra-agent
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 
-# LLM Configuration
-OPENAI_API_KEY=your_openai_api_key
-DEFAULT_LLM_MODEL=gpt-4o
-DEFAULT_LLM_TEMPERATURE=0.7
-MAX_TOKENS=4096
-
-# Long-Term Memory
-LONG_TERM_MEMORY_COLLECTION_NAME=agent_memories
-LONG_TERM_MEMORY_MODEL=gpt-4o-mini
-LONG_TERM_MEMORY_EMBEDDER_MODEL=text-embedding-3-small
-
-# Observability
+# Langfuse (LLM Observability)
 LANGFUSE_PUBLIC_KEY=your_public_key
 LANGFUSE_SECRET_KEY=your_secret_key
 LANGFUSE_HOST=https://cloud.langfuse.com
 
-# Security
-SECRET_KEY=your_secret_key_here
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+# JWT Configuration
+JWT_ALGORITHM=HS256
+JWT_ACCESS_TOKEN_EXPIRE_DAYS=30
+DEFAULT_PWD="Terra@123456"
+
+# Cache Settings
+CACHE_TYPE=memory
+# CACHE_REDIS_URL=redis://localhost:6379/0
 
 # Rate Limiting
-RATE_LIMIT_ENABLED=true
+RATE_LIMIT_DEFAULT=["200 per day", "50 per hour"]
+RATE_LIMIT_CHAT="30 per minute"
+RATE_LIMIT_CHAT_STREAM="20 per minute"
 ```
 
 ## 🧠 Long-Term Memory
@@ -270,30 +274,39 @@ The application includes a sophisticated long-term memory system powered by mem0
 
 ## 🤖 LLM Service
 
-The LLM service provides robust, production-ready language model interactions with automatic retry logic and multiple model support.
+The LLM service provides robust, production-ready language model interactions with automatic retry logic and multi-provider support.
 
 ### Features
 
-- **Multiple Model Support**: Pre-configured support for GPT-4o, GPT-4o-mini, GPT-5, and GPT-5 variants
+- **Multi-Provider Support**: OpenAI, Azure OpenAI, VLLM, and custom OpenAI-compatible endpoints
+- **Dynamic Model Configuration**: AI models configured via database with runtime switching
 - **Automatic Retries**: Uses tenacity for exponential backoff retry logic
-- **Reasoning Configuration**: GPT-5 models support configurable reasoning effort levels
-- **Environment-Specific Tuning**: Different parameters for development vs production
-- **Fallback Mechanisms**: Graceful degradation when primary models fail
+- **Backup Model Fallback**: Automatic fallback to backup models on primary failure
+- **Streaming Support**: Real-time streaming responses for chat interactions
 
-### Supported Models
+### Supported Providers
 
-| Model       | Use Case                | Reasoning Effort |
-| ----------- | ----------------------- | ---------------- |
-| gpt-5       | Complex reasoning tasks | Medium           |
-| gpt-5-mini  | Balanced performance    | Low              |
-| gpt-5-nano  | Fast responses          | Minimal          |
-| gpt-4o      | Production workloads    | N/A              |
-| gpt-4o-mini | Cost-effective tasks    | N/A              |
+| Provider | Use Case | Configuration |
+| -------- | -------- | ------------- |
+| OpenAI | Production workloads | API key + base URL |
+| Azure OpenAI | Enterprise deployments | Azure endpoint + deployment name |
+| VLLM | Self-hosted models | Custom endpoint URL |
+| Custom | OpenAI-compatible APIs | Any compatible endpoint |
+
+### Model Management
+
+AI models are managed through the admin API:
+
+- `POST /api/v1/system/aimodel` - Register new AI model
+- `GET /api/v1/system/aimodel` - List all models
+- `PUT /api/v1/system/aimodel/default/{id}` - Set default model
+- `PUT /api/v1/system/aimodel/backup/{id}` - Set backup model
+- `POST /api/v1/system/aimodel/status` - Test model connectivity
 
 ### Retry Configuration
 
 - Automatically retries on API timeouts, rate limits, and temporary errors
-- **Max Attempts**: 3
+- **Max Attempts**: 2
 - **Wait Strategy**: Exponential backoff (1s, 2s, 4s)
 - **Logging**: All retry attempts are logged with context
 
@@ -354,19 +367,48 @@ The application uses uvloop for enhanced async performance (automatically enable
 
 ### Authentication Endpoints
 
-- `POST /api/v1/auth/register` - Register a new user
 - `POST /api/v1/auth/login` - Authenticate and receive JWT token
-- `POST /api/v1/auth/logout` - Logout and invalidate session
+- `POST /api/v1/auth/register` - Register a new user (admin only)
+- `PATCH /api/v1/auth/users/me/password` - Change current user's password
+- `PATCH /api/v1/auth/users/status` - Update user status (admin only)
+- `DELETE /api/v1/auth/users/{user_id}` - Delete a user (admin only)
+
+### User Management Endpoints
+
+- `GET /api/v1/auth/users` - Get all users (admin only)
+- `GET /api/v1/auth/users/by-email` - Get user by email (admin only)
+
+### Workspace Management Endpoints
+
+- `POST /api/v1/auth/workspaces` - Create a new workspace (admin only)
+- `GET /api/v1/auth/workspaces` - Get all workspaces (admin only)
+- `GET /api/v1/auth/workspaces/{workspace_id}` - Get workspace by ID
+- `DELETE /api/v1/auth/workspaces/{workspace_id}` - Delete a workspace
+- `POST /api/v1/auth/workspaces/{workspace_id}/users` - Add users to workspace
+- `GET /api/v1/auth/workspaces/{workspace_id}/users` - Get workspace users
+- `PATCH /api/v1/auth/users/switch/workspace` - Switch active workspace
+
+### AI Model Management Endpoints
+
+- `POST /api/v1/system/aimodel` - Create AI model (admin only)
+- `GET /api/v1/system/aimodel` - List all AI models
+- `GET /api/v1/system/aimodel/{id}` - Get AI model by ID
+- `PUT /api/v1/system/aimodel` - Update AI model
+- `DELETE /api/v1/system/aimodel/{id}` - Delete AI model
+- `PUT /api/v1/system/aimodel/default/{id}` - Set default model
+- `PUT /api/v1/system/aimodel/backup/{id}` - Set backup model
+- `POST /api/v1/system/aimodel/status` - Test model connectivity
 
 ### Chat Endpoints
 
 - `POST /api/v1/chatbot/chat` - Send message and receive response
 - `POST /api/v1/chatbot/chat/stream` - Send message with streaming response
-- `GET /api/v1/chatbot/history` - Get conversation history
-- `DELETE /api/v1/chatbot/history` - Clear chat history
+- `GET /api/v1/chatbot/messages` - Get conversation history
+- `DELETE /api/v1/chatbot/messages` - Clear chat history
 
 ### Health & Monitoring
 
+- `GET /` - Root endpoint with API info
 - `GET /health` - Health check with database status
 - `GET /metrics` - Prometheus metrics endpoint
 
@@ -375,60 +417,92 @@ For detailed API documentation, visit `/docs` (Swagger UI) or `/redoc` (ReDoc) w
 ## 📚 Project Structure
 
 ```
-whatsapp-food-order/
-├── app/
-│   ├── api/
-│   │   └── v1/
-│   │       ├── auth.py              # Authentication endpoints
-│   │       ├── chatbot.py           # Chat endpoints
-│   │       └── api.py               # API router aggregation
-│   ├── core/
-│   │   ├── config.py                # Configuration management
-│   │   ├── logging.py               # Logging setup
-│   │   ├── metrics.py               # Prometheus metrics
-│   │   ├── middleware.py            # Custom middleware
-│   │   ├── limiter.py               # Rate limiting
-│   │   ├── langgraph/
-│   │   │   ├── graph.py             # LangGraph agent
-│   │   │   └── tools.py             # Agent tools
-│   │   └── prompts/
-│   │       ├── __init__.py          # Prompt loader
-│   │       └── system.md            # System prompts
-│   ├── models/
-│   │   ├── user.py                  # User model
-│   │   └── session.py               # Session model
-│   ├── schemas/
-│   │   ├── auth.py                  # Auth schemas
-│   │   ├── chat.py                  # Chat schemas
-│   │   └── graph.py                 # Graph state schemas
-│   ├── services/
-│   │   ├── database.py              # Database service
-│   │   └── llm.py                   # LLM service with retries
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   └── graph.py                 # Graph utility functions
-│   └── main.py                      # Application entry point
-├── evals/
-│   ├── evaluator.py                 # Evaluation logic
-│   ├── main.py                      # Evaluation CLI
-│   ├── metrics/
-│   │   └── prompts/                 # Evaluation metric definitions
-│   └── reports/                     # Generated evaluation reports
-├── grafana/                         # Grafana dashboards
-├── prometheus/                      # Prometheus configuration
-├── scripts/                         # Utility scripts
-├── docker-compose.yml               # Docker Compose configuration
-├── Dockerfile                       # Application Docker image
-├── Makefile                         # Development commands
-├── pyproject.toml                   # Python dependencies
-├── schema.sql                       # Database schema
-├── SECURITY.md                      # Security policy
-└── README.md                        # This file
+TerraAgent/
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── v1/
+│   │   │       ├── auth.py              # Authentication & user management
+│   │   │       ├── chatbot.py           # Chat endpoints
+│   │   │       ├── api.py               # API router aggregation
+│   │   │       └── system/
+│   │   │           └── ai_model.py      # AI model management
+│   │   ├── core/
+│   │   │   ├── common/
+│   │   │   │   ├── config.py            # Configuration management
+│   │   │   │   ├── logging.py           # Structured logging
+│   │   │   │   ├── metrics.py           # Prometheus metrics
+│   │   │   │   ├── middleware/          # Custom middleware
+│   │   │   │   ├── cache.py             # Caching layer
+│   │   │   │   ├── db.py                # Database utilities
+│   │   │   │   └── limiter.py           # Rate limiting
+│   │   │   ├── langgraph/
+│   │   │   │   ├── graph.py             # LangGraph agent
+│   │   │   │   └── tools/               # Agent tools
+│   │   │   ├── llm/
+│   │   │   │   └── model_factory.py     # LLM factory & providers
+│   │   │   └── prompts/                 # System prompts
+│   │   ├── models/
+│   │   │   ├── user.py                  # User & workspace models
+│   │   │   ├── session.py               # Session model
+│   │   │   └── ai_model.py              # AI model entity
+│   │   ├── schemas/
+│   │   │   ├── auth.py                  # Auth schemas
+│   │   │   ├── chat.py                  # Chat schemas
+│   │   │   └── graph.py                 # Graph state schemas
+│   │   ├── services/
+│   │   │   ├── auth.py                  # Auth service
+│   │   │   ├── llm.py                   # LLM service with retries
+│   │   │   ├── database.py              # Database service
+│   │   │   └── system.py                # System service
+│   │   ├── utils/
+│   │   │   ├── auth.py                  # Auth utilities
+│   │   │   ├── graph.py                 # Graph utilities
+│   │   │   └── sanitization.py          # Input sanitization
+│   │   └── main.py                      # Application entry point
+│   ├── evals/
+│   │   ├── evaluator.py                 # Evaluation logic
+│   │   ├── main.py                      # Evaluation CLI
+│   │   └── metrics/prompts/             # Evaluation metrics
+│   ├── alembic/                         # Database migrations
+│   ├── grafana/dashboards/              # Grafana dashboards
+│   ├── prometheus/                      # Prometheus config
+│   ├── scripts/                         # Utility scripts
+│   ├── Dockerfile
+│   ├── pyproject.toml                   # Python dependencies
+│   └── alembic.ini                      # Alembic configuration
+├── frontend/
+│   ├── src/
+│   │   ├── components/                 # Vue components
+│   │   ├── composables/                 # Vue composables
+│   │   ├── router/                      # Vue Router config
+│   │   ├── services/                    # API services
+│   │   ├── stores/                      # Pinia stores
+│   │   ├── types/                       # TypeScript types
+│   │   ├── views/                       # Vue views
+│   │   ├── App.vue
+│   │   └── main.ts
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── Dockerfile
+├── Makefile                             # Development commands
+├── docker-compose.yml
+├── docker-compose.monitoring.yml
+└── README.md
 ```
 
 ## 🛡️ Security
 
 For security concerns, please review our [Security Policy](SECURITY.md).
+
+### Security Features
+
+- **JWT Authentication**: Secure token-based authentication with configurable expiration
+- **Password Hashing**: bcrypt-based password hashing
+- **Input Sanitization**: All user inputs are sanitized and validated
+- **Rate Limiting**: Protection against brute force and DDoS attacks
+- **CORS Protection**: Configurable allowed origins
+- **Protected Admin Actions**: Admin-only endpoints require special permissions
 
 ## 📄 License
 
@@ -446,4 +520,12 @@ Contributions are welcome! Please ensure:
 
 ## 📞 Support
 
-For issues, questions, or contributions, please open an issue on the project repository
+For issues, questions, or contributions, please open an issue on the project repository.
+
+## 🙏 Acknowledgments
+
+- [FastAPI](https://fastapi.tiangolo.com/) - Modern web framework for building APIs
+- [LangGraph](https://langchain-ai.github.io/langgraph/) - Agent workflow orchestration
+- [Langfuse](https://langfuse.com/) - LLM observability platform
+- [Vue.js](https://vuejs.org/) - Progressive JavaScript framework
+- [Naive UI](https://www.naiveui.com/) - Vue 3 component library
