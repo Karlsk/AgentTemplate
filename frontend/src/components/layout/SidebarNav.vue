@@ -33,6 +33,7 @@ const allNavItems: NavItem[] = [
   { key: 'aimodel', label: 'AI Models', icon: '🤖', to: '/system/aimodel', adminOnly: true },
   { key: 'users', label: 'Users', icon: '👥', to: '/system/users', adminOnly: true },
   { key: 'workspace', label: 'Workspace', icon: '📁', to: '/system/workspace', adminOnly: true },
+  { key: 'mcpserver', label: 'MCP Servers', icon: '🔌', to: '/system/mcpserver', adminOnly: true },
 ]
 
 const navItems = computed(() => {

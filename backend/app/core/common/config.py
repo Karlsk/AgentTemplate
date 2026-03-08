@@ -236,6 +236,7 @@ class Settings(BaseSettings):
         "login": ["20 per minute"],
         "root": ["10 per minute"],
         "health": ["20 per minute"],
+        "mcp_server": ["30 per minute"],
     }
     RATE_LIMIT_ENDPOINTS: dict[str, list[str]] = {}
     RATE_LIMIT_DEFAULT: list[str] = ["100 per day", "20 per hour"]

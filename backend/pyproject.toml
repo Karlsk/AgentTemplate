@@ -42,6 +42,7 @@ dependencies = [
     "redis>=6.2.0",
     "alembic>=1.12.1,<2.0.0",
     "dotenv>=0.9.9",
+    "langchain-mcp-adapters>=0.2.1",
 ]
 
 [project.optional-dependencies]

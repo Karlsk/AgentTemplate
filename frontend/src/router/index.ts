@@ -39,6 +39,12 @@ const router = createRouter({
           component: () => import('@/views/system/workspace/WorkspaceView.vue'),
           meta: { title: 'Workspace', icon: 'folder', requiresAdmin: true },
         },
+        {
+          path: 'system/mcpserver',
+          name: 'mcpserver',
+          component: () => import('@/views/system/mcpserver/McpServerView.vue'),
+          meta: { title: 'MCP Servers', icon: 'server', requiresAdmin: true },
+        },
       ],
     },
   ],
