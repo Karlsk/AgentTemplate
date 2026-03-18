@@ -36,6 +36,16 @@ const allNavItems: NavItem[] = [
   { key: 'mcpserver', label: 'MCP Servers', icon: '🔌', to: '/system/mcpserver', adminOnly: true },
 ]
 
+const ragNavItems: NavItem[] = [
+  { key: 'rag-kb', label: 'Knowledge Bases', icon: '📚', to: '/rag/kb' },
+  { key: 'rag-search', label: 'RAG Search', icon: '🔍', to: '/rag/search' },
+]
+
+const nl2sqlNavItems: NavItem[] = [
+  { key: 'nl2sql-db-config', label: 'DB Configs', icon: '🗄️', to: '/nl2sql/db-config' },
+  { key: 'nl2sql-instance', label: 'NL2SQL Instances', icon: '💬', to: '/nl2sql/instance' },
+]
+
 const navItems = computed(() => {
   return allNavItems.filter((item) => !item.adminOnly || authStore.isAdmin)
 })
@@ -112,9 +122,74 @@ function handleUserAction(key: string) {
     </div>
 
     <!-- Navigation Items -->
-    <nav class="flex-1 space-y-1 px-2 py-2">
+    <nav class="flex-1 space-y-1 overflow-y-auto px-2 py-2">
+      <!-- System Section -->
+      <template v-if="showSystemSection">
+        <NTooltip
+          v-for="item in navItems"
+          :key="item.key"
+          placement="right"
+          :disabled="!collapsed"
+        >
+          <template #trigger>
+            <button
+              class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all duration-200"
+              :class="[
+                isActive(item.to)
+                  ? 'bg-(--color-primary-light) text-(--color-primary) dark:bg-white/10 dark:text-(--color-primary)'
+                  : 'text-(--color-text-secondary) hover:bg-gray-100 dark:text-(--color-text-secondary-dark) dark:hover:bg-white/5',
+              ]"
+              @click="navigate(item.to)"
+            >
+              <span class="shrink-0 text-base">{{ item.icon }}</span>
+              <Transition name="fade">
+                <span v-if="!collapsed" class="truncate">{{ item.label }}</span>
+              </Transition>
+            </button>
+          </template>
+          {{ item.label }}
+        </NTooltip>
+      </template>
+
+      <!-- RAG Section -->
+      <div v-if="!collapsed" class="px-2 pb-1 pt-3">
+        <span class="text-xs font-medium tracking-wider uppercase text-(--color-text-secondary) dark:text-(--color-text-secondary-dark)">
+          RAG
+        </span>
+      </div>
       <NTooltip
-        v-for="item in navItems"
+        v-for="item in ragNavItems"
+        :key="item.key"
+        placement="right"
+        :disabled="!collapsed"
+      >
+        <template #trigger>
+          <button
+            class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all duration-200"
+            :class="[
+              isActive(item.to)
+                ? 'bg-(--color-primary-light) text-(--color-primary) dark:bg-white/10 dark:text-(--color-primary)'
+                : 'text-(--color-text-secondary) hover:bg-gray-100 dark:text-(--color-text-secondary-dark) dark:hover:bg-white/5',
+            ]"
+            @click="navigate(item.to)"
+          >
+            <span class="shrink-0 text-base">{{ item.icon }}</span>
+            <Transition name="fade">
+              <span v-if="!collapsed" class="truncate">{{ item.label }}</span>
+            </Transition>
+          </button>
+        </template>
+        {{ item.label }}
+      </NTooltip>
+
+      <!-- NL2SQL Section -->
+      <div v-if="!collapsed" class="px-2 pb-1 pt-3">
+        <span class="text-xs font-medium tracking-wider uppercase text-(--color-text-secondary) dark:text-(--color-text-secondary-dark)">
+          NL2SQL
+        </span>
+      </div>
+      <NTooltip
+        v-for="item in nl2sqlNavItems"
         :key="item.key"
         placement="right"
         :disabled="!collapsed"

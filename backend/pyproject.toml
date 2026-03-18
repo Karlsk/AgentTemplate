@@ -43,10 +43,32 @@ dependencies = [
     "alembic>=1.12.1,<2.0.0",
     "dotenv>=0.9.9",
     "langchain-mcp-adapters>=0.2.1",
+    "llama-index-core>=0.12.0",
+    "llama-index-vector-stores-postgres>=0.6.0",
+    "llama-index-embeddings-openai>=0.3.0",
+    "llama-index-readers-file>=0.4.0",
+    "pgvector>=0.3.6",
+    "pypdf>=5.0.0",
+    "python-docx>=1.1.0",
+    "beautifulsoup4>=4.12.0",
+    "rank-bm25>=0.2.2",
+    # NL2SQL database drivers (common)
+    "pymysql>=1.1.0",
+    "clickhouse-connect>=0.7.0",
+    "elasticsearch>=8.0.0",
+    "requests>=2.31.0",
 ]
 
 [project.optional-dependencies]
 dev = ["black", "isort", "flake8", "ruff", "djlint==1.36.4"]
+# Optional database drivers - install as needed:
+#   pip install "TerraAgent[oracle]"
+#   pip install "TerraAgent[sqlserver]"
+#   pip install "TerraAgent[all-db]"
+oracle = ["oracledb>=2.0.0"]
+sqlserver = ["pymssql>=2.2.0"]
+all-db = ["oracledb>=2.0.0", "pymssql>=2.2.0"]
+# Note: Dameng (dmPython) requires manual installation from https://eco.dameng.com
 
 [dependency-groups]
 test = ["httpx>=0.28.1", "pytest>=8.3.5"]

@@ -14,10 +14,12 @@ ENV APP_ENV=${APP_ENV} \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100
 
-# Install system dependencies
+# Install system dependencies (including libs needed by RAG: PDF, XML parsing)
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    libxml2-dev \
+    libxslt1-dev \
     && pip install --upgrade pip \
     && pip install uv \
     && rm -rf /var/lib/apt/lists/*
@@ -32,12 +34,11 @@ COPY . .
 # Make entrypoint script executable - do this before changing user
 RUN chmod +x /app/scripts/docker-entrypoint.sh
 
-# Create a non-root user
-RUN useradd -m appuser && chown -R appuser:appuser /app
+# Create a non-root user and required directories
+RUN useradd -m appuser \
+    && mkdir -p /app/logs /opt/terra-agent/data/rag \
+    && chown -R appuser:appuser /app /opt/terra-agent
 USER appuser
-
-# Create log directory
-RUN mkdir -p /app/logs
 
 # Default port
 EXPOSE 8009
@@ -47,4 +48,4 @@ RUN echo "Using ${APP_ENV} environment"
 
 # Command to run the application
 ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]
-CMD ["/app/.venv/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8009"] 
+CMD ["/app/.venv/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8009"]

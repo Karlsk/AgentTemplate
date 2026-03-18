@@ -1,6 +1,11 @@
 from app.models.ai_model import AiModelDetail
 from app.models.session import SessionModel
 from app.models.user import UserModel, WorkSpaceModel, WorkspaceUserModel
+from app.models.rag import KnowledgeBaseModel, DocumentModel
+from app.models.nl2sql import (
+    NL2SQLDbConfigModel, NL2SQLInstanceModel,
+    NL2SQLTrainingDataModel, NL2SQLSchemaMetaModel,
+)
 from app.models.base import SQLModel
 from app.core.common.config import settings
 from logging.config import fileConfig

@@ -2,7 +2,7 @@
 # Usage: APP_ENV=production docker compose up -d
 
 services:
-  # ============ Database ============
+  # ============ Database (PostgreSQL + pgvector) ============
   db:
     image: pgvector/pgvector:pg17
     container_name: agent-db
@@ -12,8 +12,9 @@ services:
       - backend/.env.${APP_ENV:-development}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,6 +33,7 @@ services:
     volumes:
       - ./backend/app:/app/app
       - ./backend/logs:/app/logs
+      - rag-uploads:/opt/terra-agent/data/rag
     env_file:
       - backend/.env.${APP_ENV:-development}
     container_name: agent-backend
@@ -39,11 +41,11 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8009/health')"]
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8009/health')" ]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 30s
     restart: always
     networks:
       - terraagent
@@ -68,3 +70,4 @@ networks:
 
 volumes:
   postgres-data:
+  rag-uploads:

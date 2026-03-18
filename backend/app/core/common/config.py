@@ -212,6 +212,25 @@ class Settings(BaseSettings):
     GENERATE_SQL_QUERY_LIMIT_ENABLED: bool = True
     GENERATE_SQL_QUERY_HISTORY_ROUND_COUNT: int = 3
 
+    # RAG Settings
+    RAG_UPLOAD_DIR: str = "/opt/terra-agent/data/rag"
+    RAG_DEFAULT_CHUNK_SIZE: int = 512
+    RAG_DEFAULT_CHUNK_OVERLAP: int = 64
+    RAG_EMBEDDING_BATCH_SIZE: int = 32
+    RAG_EMBEDDING_DIMENSION: int = 1536
+    RAG_SEARCH_DEFAULT_TOP_K: int = 5
+    RAG_KEYWORD_TOP_K: int = 20
+    RAG_VECTOR_TABLE_NAME: str = "rag_vectors"
+    RAG_RERANK_MODEL: str = ""
+
+    # NL2SQL Settings
+    NL2SQL_CONNECT_TIMEOUT: int = 10
+    NL2SQL_SCHEMA_SYNC_BATCH_SIZE: int = 50
+    NL2SQL_DEFAULT_TOP_K_DDL: int = 10
+    NL2SQL_DEFAULT_TOP_K_SQL: int = 5
+    NL2SQL_DEFAULT_TOP_K_DOC: int = 5
+    NL2SQL_SIMILARITY_THRESHOLD: float = 0.3
+
     # PostgreSQL Pool Settings
     PG_POOL_SIZE: int = 20
     PG_MAX_OVERFLOW: int = 30

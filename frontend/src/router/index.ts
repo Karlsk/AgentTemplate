@@ -45,6 +45,43 @@ const router = createRouter({
           component: () => import('@/views/system/mcpserver/McpServerView.vue'),
           meta: { title: 'MCP Servers', icon: 'server', requiresAdmin: true },
         },
+        {
+          path: 'rag/kb',
+          name: 'rag-kb',
+          component: () => import('@/views/rag/KnowledgeBaseView.vue'),
+          meta: { title: 'Knowledge Bases' },
+        },
+        {
+          path: 'rag/kb/:kbId/documents',
+          name: 'rag-documents',
+          component: () => import('@/views/rag/DocumentListView.vue'),
+          meta: { title: 'Documents' },
+        },
+        {
+          path: 'rag/search',
+          name: 'rag-search',
+          component: () => import('@/views/rag/SearchView.vue'),
+          meta: { title: 'RAG Search' },
+        },
+        // NL2SQL Routes
+        {
+          path: 'nl2sql/db-config',
+          name: 'nl2sql-db-config',
+          component: () => import('@/views/nl2sql/DbConfigView.vue'),
+          meta: { title: 'Database Configs' },
+        },
+        {
+          path: 'nl2sql/instance',
+          name: 'nl2sql-instance',
+          component: () => import('@/views/nl2sql/NL2SQLInstanceView.vue'),
+          meta: { title: 'NL2SQL Instances' },
+        },
+        {
+          path: 'nl2sql/instance/:instanceId',
+          name: 'nl2sql-instance-detail',
+          component: () => import('@/views/nl2sql/NL2SQLInstanceDetailView.vue'),
+          meta: { title: 'NL2SQL Instance' },
+        },
       ],
     },
   ],

@@ -59,6 +59,10 @@ echo "Debug Mode: ${DEBUG:-false}"
 
 # Run database migrations if necessary
 # e.g., alembic upgrade head
+echo "Running database migrations..."
+cd /app && .venv/bin/python -m alembic upgrade head || {
+    echo "Warning: Alembic migration failed, continuing startup..."
+}
 
 # Execute the CMD
 exec "$@"
