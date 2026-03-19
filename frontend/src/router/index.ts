@@ -68,7 +68,7 @@ router.beforeEach((to, _from, next) => {
 
 router.afterEach((to) => {
   const title = to.meta.title as string | undefined
-  document.title = title ? `${title} - TerraChatBI` : 'TerraChatBI'
+  document.title = title ? `${title} - Agent编排系统` : 'Agent编排系统'
 })
 
 export default router

@@ -8,9 +8,9 @@ const authStore = useAuthStore()
 
 const greeting = computed(() => {
   const hour = new Date().getHours()
-  if (hour < 12) return 'Good Morning'
-  if (hour < 18) return 'Good Afternoon'
-  return 'Good Evening'
+  if (hour < 12) return '早上好'
+  if (hour < 18) return '下午好'
+  return '晚上好'
 })
 
 const userEmail = computed(() => authStore.user?.email ?? '')
@@ -20,7 +20,7 @@ const userEmail = computed(() => authStore.user?.email ?? '')
   <div class="p-6">
     <PageHeader
       :title="`${greeting}, ${userEmail}`"
-      description="Welcome to TerraChatBI - Your AI-powered Business Intelligence Platform"
+      description="欢迎使用Agent编排系统 - 智能AI Agent编排平台"
     />
 
     <NGrid :cols="3" :x-gap="16" :y-gap="16" class="mt-6">
@@ -44,7 +44,7 @@ const userEmail = computed(() => authStore.user?.email ?? '')
         <NCard class="bento-card h-full">
           <NSpace vertical align="center" justify="center" class="py-8">
             <div class="text-4xl mb-2">🔍</div>
-            <NStatistic label="Queries Processed" value="--" />
+            <NStatistic label="处理查询" value="--" />
           </NSpace>
         </NCard>
       </NGi>
@@ -56,12 +56,12 @@ const userEmail = computed(() => authStore.user?.email ?? '')
       </template>
       <div class="text-gray-600 dark:text-gray-400">
         <p class="mb-4">
-          TerraChatBI helps you analyze and visualize your business data using natural language queries.
+          Agent编排系统帮助您通过智能Agent工作流编排，实现业务数据的分析与可视化。
         </p>
         <ul class="list-disc list-inside space-y-2">
-          <li>Ask questions in plain English about your data</li>
-          <li>Generate charts and reports automatically</li>
-          <li>Export insights to various formats</li>
+          <li>使用自然语言查询您的业务数据</li>
+          <li>自动生成图表和报告</li>
+          <li>将洞察导出为多种格式</li>
         </ul>
       </div>
     </NCard>

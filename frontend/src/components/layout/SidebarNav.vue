@@ -95,11 +95,11 @@ function handleUserAction(key: string) {
       <div
         class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-(--color-primary) text-sm font-bold text-white"
       >
-        T
+        A
       </div>
       <Transition name="fade">
         <span v-if="!collapsed" class="truncate text-sm font-semibold text-(--color-text-primary) dark:text-(--color-text-primary-dark)">
-          TerraChatBI
+          Agent编排系统
         </span>
       </Transition>
     </div>

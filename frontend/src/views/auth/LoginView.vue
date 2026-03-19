@@ -21,8 +21,8 @@ const formValue = ref({
 
 const rules: FormRules = {
   email: [
-    { required: true, message: 'Please enter your email', trigger: 'blur' },
-    { type: 'email', message: 'Please enter a valid email', trigger: 'blur' },
+    { required: true, message: '请输入邮箱', trigger: 'blur' },
+    { type: 'email', message: '请输入有效的邮箱地址', trigger: 'blur' },
   ],
   password: [
     { required: true, message: 'Please enter your password', trigger: 'blur' },
@@ -40,7 +40,7 @@ async function handleSubmit() {
   try {
     const res = await authService.login(formValue.value.email, formValue.value.password)
     authStore.setAuth(res)
-    message.success('Login successful')
+    message.success('登录成功')
     const redirect = (route.query.redirect as string) || '/'
     router.push(redirect)
   } catch (err) {
@@ -58,12 +58,12 @@ async function handleSubmit() {
       <div class="max-w-md px-8 text-center text-white">
         <div class="mb-6 flex justify-center">
           <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-3xl font-bold backdrop-blur-sm">
-            T
+            A
           </div>
         </div>
-        <h1 class="mb-4 text-4xl font-bold">TerraChatBI</h1>
+        <h1 class="mb-4 text-4xl font-bold">Agent编排系统</h1>
         <p class="text-lg leading-relaxed text-blue-100">
-          Intelligent AI Agent Platform with powerful workflow orchestration and real-time analytics.
+          智能AI Agent平台，提供强大的工作流编排与实时分析能力。
         </p>
       </div>
     </div>
@@ -74,9 +74,9 @@ async function handleSubmit() {
         <!-- Mobile Logo -->
         <div class="mb-8 text-center lg:hidden">
           <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-(--color-primary) text-xl font-bold text-white">
-            T
+            A
           </div>
-          <h1 class="text-2xl font-bold text-(--color-text-primary) dark:text-(--color-text-primary-dark)">TerraChatBI</h1>
+          <h1 class="text-2xl font-bold text-(--color-text-primary) dark:text-(--color-text-primary-dark)">Agent编排系统</h1>
         </div>
 
         <div class="bento-card">
@@ -112,7 +112,7 @@ async function handleSubmit() {
               class="!mt-2"
               @click="handleSubmit"
             >
-              Sign In
+              登录
             </NButton>
           </NForm>
         </div>
