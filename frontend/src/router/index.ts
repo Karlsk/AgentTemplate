@@ -45,6 +45,18 @@ const router = createRouter({
           component: () => import('@/views/system/mcpserver/McpServerView.vue'),
           meta: { title: 'MCP Servers', icon: 'server', requiresAdmin: true },
         },
+        {
+          path: 'rag',
+          name: 'rag',
+          component: () => import('@/views/rag/RagView.vue'),
+          meta: { title: 'Knowledge Base', icon: 'book' },
+        },
+        {
+          path: 'rag/instance/:instanceId',
+          name: 'rag-detail',
+          component: () => import('@/views/rag/RagDetailView.vue'),
+          meta: { title: 'Knowledge Base Detail', icon: 'book' },
+        },
       ],
     },
   ],

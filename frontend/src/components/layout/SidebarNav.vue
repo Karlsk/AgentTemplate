@@ -29,19 +29,23 @@ interface NavItem {
   adminOnly?: boolean
 }
 
-const allNavItems: NavItem[] = [
+const workspaceNavItems: NavItem[] = [
+  { key: 'rag', label: 'Knowledge Base', icon: '📚', to: '/rag' },
+]
+
+const systemNavItems: NavItem[] = [
   { key: 'aimodel', label: 'AI Models', icon: '🤖', to: '/system/aimodel', adminOnly: true },
   { key: 'users', label: 'Users', icon: '👥', to: '/system/users', adminOnly: true },
   { key: 'workspace', label: 'Workspace', icon: '📁', to: '/system/workspace', adminOnly: true },
   { key: 'mcpserver', label: 'MCP Servers', icon: '🔌', to: '/system/mcpserver', adminOnly: true },
 ]
 
-const navItems = computed(() => {
-  return allNavItems.filter((item) => !item.adminOnly || authStore.isAdmin)
-})
+const workspaceItems = computed(() => workspaceNavItems)
+const systemItems = computed(() => systemNavItems.filter((item) => !item.adminOnly || authStore.isAdmin))
 
+const showWorkspaceSection = computed(() => workspaceItems.value.length > 0)
 const showSystemSection = computed(() => {
-  return navItems.value.length > 0
+  return systemItems.value.length > 0
 })
 
 const activePath = computed(() => route.path)
@@ -105,16 +109,51 @@ function handleUserAction(key: string) {
     </div>
 
     <!-- Section Label -->
-    <div v-if="!collapsed && showSystemSection" class="px-4 pt-4 pb-2">
+    <div v-if="!collapsed && showWorkspaceSection" class="px-4 pt-4 pb-2">
+      <span class="text-xs font-medium tracking-wider uppercase text-(--color-text-secondary) dark:text-(--color-text-secondary-dark)">
+        Workspace
+      </span>
+    </div>
+
+    <!-- Workspace Navigation Items -->
+    <nav class="space-y-1 px-2 py-2">
+      <NTooltip
+        v-for="item in workspaceItems"
+        :key="item.key"
+        placement="right"
+        :disabled="!collapsed"
+      >
+        <template #trigger>
+          <button
+            class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all duration-200"
+            :class="[
+              isActive(item.to)
+                ? 'bg-(--color-primary-light) text-(--color-primary) dark:bg-white/10 dark:text-(--color-primary)'
+                : 'text-(--color-text-secondary) hover:bg-gray-100 dark:text-(--color-text-secondary-dark) dark:hover:bg-white/5',
+            ]"
+            @click="navigate(item.to)"
+          >
+            <span class="shrink-0 text-base">{{ item.icon }}</span>
+            <Transition name="fade">
+              <span v-if="!collapsed" class="truncate">{{ item.label }}</span>
+            </Transition>
+          </button>
+        </template>
+        {{ item.label }}
+      </NTooltip>
+    </nav>
+
+    <!-- System Section Label -->
+    <div v-if="!collapsed && showSystemSection" class="px-4 pt-3 pb-2">
       <span class="text-xs font-medium tracking-wider uppercase text-(--color-text-secondary) dark:text-(--color-text-secondary-dark)">
         System
       </span>
     </div>
 
-    <!-- Navigation Items -->
-    <nav class="flex-1 space-y-1 px-2 py-2">
+    <!-- System Navigation Items -->
+    <nav class="flex-1 space-y-1 px-2 pb-2">
       <NTooltip
-        v-for="item in navItems"
+        v-for="item in systemItems"
         :key="item.key"
         placement="right"
         :disabled="!collapsed"

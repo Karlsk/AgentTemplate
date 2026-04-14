@@ -218,6 +218,18 @@ class Settings(BaseSettings):
     PG_POOL_RECYCLE: int = 3600
     PG_POOL_PRE_PING: bool = True
 
+    # RAG / Vector Store Settings
+    RAG_VECTOR_STORE: str = "pgvector"  # "pgvector" | "milvus"
+    MILVUS_URI: str = "http://localhost:19530"
+    MILVUS_TOKEN: str = ""
+
+    # OpenAI-compatible Settings (used by RAG pipeline/rerank when needed)
+    OPENAI_API_KEY: str = ""
+    OPENAI_BASE_URL: str = "https://api.openai.com/v1"
+    LLM_MODEL: str = "gpt-4o-mini"
+    RERANK_MODEL: str = ""
+    LLM_TIMEOUT: int = 600
+
     @field_validator("PG_POOL_PRE_PING", mode="before")
     @classmethod
     def parse_pool_pre_ping(cls, v: Any) -> bool:
